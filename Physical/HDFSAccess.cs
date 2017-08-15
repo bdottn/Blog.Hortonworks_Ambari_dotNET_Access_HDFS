@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 
 namespace Physical
 {
@@ -50,6 +51,12 @@ namespace Physical
         {
             // 傳入路徑不包含根目錄時，預設會在根目錄「/」底下
             return this.webHDFSClient.DeleteDirectory(path).Result;
+        }
+
+        public HttpResponseMessage OpenFile(string path)
+        {
+            // 傳入路徑不包含根目錄時，預設會在根目錄「/」底下
+            return this.webHDFSClient.OpenFile(path).Result;
         }
     }
 }
