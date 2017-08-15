@@ -1,6 +1,7 @@
 ﻿using ExpectedObjects;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Physical.UnitTest
 {
@@ -35,6 +36,15 @@ namespace Physical.UnitTest
                 {
                     this.access.DeleteDirectory(directory);
                 }
+            }
+
+            // 取得根目錄檔案
+            var files = this.access.GetFiles(@"/");
+
+            // 移除所有檔案
+            foreach (var file in files)
+            {
+                this.access.DeleteFile(file);
             }
         }
 
@@ -92,6 +102,36 @@ namespace Physical.UnitTest
             var actualDeleteDirectory = this.access.GetDirectories(@"/");
 
             expectedDeleteDirectory.ToExpectedObject().ShouldEqual(actualDeleteDirectory);
+        }
+
+        [TestMethod]
+        public void FileTest_建立Test檔案_預期根目錄下有Test檔案_刪除Test檔案_預期成功_預期根目錄下無Test檔案()
+        {
+            var localFile = Path.Combine(Directory.GetCurrentDirectory(), "TestFolder", "Test.jpg");
+            var remotePath = "Test.jpg";
+
+            // 建立Test檔案
+            var boolCreateFile = this.access.CreateFile(localFile, remotePath);
+
+            // 建立Test檔案_預期根目錄下有Test檔案
+            var expectedCreateFile = new List<string>() { remotePath, };
+
+            var actualCreateFile = this.access.GetFiles(@"/");
+
+            expectedCreateFile.ToExpectedObject().ShouldEqual(actualCreateFile);
+
+            // 刪除Test檔案
+            var boolDeleteFile = this.access.DeleteDirectory(remotePath);
+
+            // 刪除Test檔案_預期成功
+            Assert.IsTrue(boolDeleteFile);
+
+            // 刪除Test檔案_預期成功_預期根目錄下無Test檔案
+            var expectedDeleteFile = new List<string>();
+
+            var actualDeleteFile = this.access.GetFiles(@"/");
+
+            expectedDeleteFile.ToExpectedObject().ShouldEqual(actualDeleteFile);
         }
     }
 }
