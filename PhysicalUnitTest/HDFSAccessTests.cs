@@ -46,6 +46,9 @@ namespace Physical.UnitTest
             {
                 this.access.DeleteFile(file);
             }
+
+            // 移除 OpenFile 轉存檔案
+            File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "Test.jpg"));
         }
 
         [TestMethod]
@@ -132,6 +135,40 @@ namespace Physical.UnitTest
             var actualDeleteFile = this.access.GetFiles(@"/");
 
             expectedDeleteFile.ToExpectedObject().ShouldEqual(actualDeleteFile);
+        }
+
+        [TestMethod]
+        public void OpenFileTest_建立Test檔案_預期根目錄下有Test檔案_取得Test檔案_預期成功_預期回傳Test檔案Stream並轉存成功()
+        {
+            var localFile = Path.Combine(Directory.GetCurrentDirectory(), "TestFolder", "Test.jpg");
+            var remotePath = "Test.jpg";
+            var saveFile = Path.Combine(Directory.GetCurrentDirectory(), "Test.jpg");
+
+            Assert.IsFalse(File.Exists(saveFile));
+
+            // 建立Test檔案
+            var boolCreateFile = this.access.CreateFile(localFile, remotePath);
+
+            // 建立Test檔案_預期根目錄下有Test檔案
+            var expectedCreateFile = new List<string>() { remotePath, };
+
+            var actualCreateFile = this.access.GetFiles(@"/");
+
+            expectedCreateFile.ToExpectedObject().ShouldEqual(actualCreateFile);
+
+            // 取得Test檔案
+            var response = this.access.OpenFile(remotePath);
+
+            // 取得Test檔案_預期成功
+            response.EnsureSuccessStatusCode();
+
+            // 取得Test檔案_預期成功_預期回傳Test檔案Stream並轉存成功
+            using (var fs = File.Create(saveFile))
+            {
+                response.Content.CopyToAsync(fs).Wait();
+            }
+
+            Assert.IsTrue(File.Exists(saveFile));
         }
     }
 }
