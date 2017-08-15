@@ -27,5 +27,17 @@ namespace Physical
 
             return directoryStatus.Files.Select(d => d.PathSuffix).ToList();
         }
+
+        public bool CreateDirectory(string path)
+        {
+            // 傳入路徑不包含根目錄時，預設會在根目錄「/」底下
+            return this.webHDFSClient.CreateDirectory(path).Result;
+        }
+
+        public bool DeleteDirectory(string path)
+        {
+            // 傳入路徑不包含根目錄時，預設會在根目錄「/」底下
+            return this.webHDFSClient.DeleteDirectory(path).Result;
+        }
     }
 }
