@@ -39,5 +39,17 @@ namespace Physical
             // 傳入路徑不包含根目錄時，預設會在根目錄「/」底下
             return this.webHDFSClient.DeleteDirectory(path).Result;
         }
+
+        public string CreateFile(string localFile, string remotePath)
+        {
+            // 傳入遠端路徑不包含根目錄時，預設會在根目錄「/」底下
+            return this.webHDFSClient.CreateFile(localFile, remotePath).Result;
+        }
+
+        public bool DeleteFile(string path)
+        {
+            // 傳入路徑不包含根目錄時，預設會在根目錄「/」底下
+            return this.webHDFSClient.DeleteDirectory(path).Result;
+        }
     }
 }
